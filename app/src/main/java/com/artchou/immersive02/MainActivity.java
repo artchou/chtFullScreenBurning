@@ -16,6 +16,8 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.tencent.bugly.crashreport.CrashReport;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,15 +48,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 1107 add by artchou for bugly
+        CrashReport.initCrashReport(getApplicationContext(), "57b66d78b2", true);
+        //CrashReport.testJavaCrash();
+
         videoV = findViewById(R.id.videoView);
         mediaC = new MediaController(this);
 
         File dir = new File(path);
         dir.mkdirs();
 
-        String videopath = "android.resource://com.artchou.immersive02/"+R.raw.videotest;
-        Uri uri = Uri.parse(videopath);
-
+        //String videopath = "android.resource://com.artchou.immersive02/"+R.raw.videotest;
+        String videopath1 = Environment.getExternalStorageDirectory().toString();
+        String videoPath2 = "/sdcard/videotest.mp4";
+        Toast.makeText(getApplicationContext(),videoPath2,Toast.LENGTH_LONG).show();
+       // Uri uri = Uri.parse(videopath);
+        Uri uri = Uri.parse(videoPath2);
         videoV.setVideoURI(uri);
         videoV.setMediaController(mediaC);
         videoV.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -80,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 String hour = String.valueOf(fromTime.get(Calendar.HOUR_OF_DAY));
                 String minute = String.valueOf(fromTime.get(Calendar.MINUTE));
                 String second = String.valueOf(fromTime.get(Calendar.SECOND));
-                String logFileName = month+day+hour+minute+second+".txt";
+                String logFileName = month+"-"+day+"-"+hour+"-"+minute+"-"+second+".txt";
                 Log.i("month",month);
                 Log.i("day",day);
                 Log.i("hour",hour);
@@ -114,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
                 final Toast tag = Toast.makeText(getApplicationContext(),
                         "run :" + loopNum + "\n"
                         +"start time at " + fromTime.getTime() + "\n"
-                        +"runs time :" + hours+"小时"+minutes+"分" + seconds +"秒" +"\n\n",
+                        +"runs time :"+ days + "days"+ hours+"hr"+minutes+"min" + seconds +"sec" +"\n\n",
                         Toast.LENGTH_LONG);
                 tag.show();
                 // add log to logfile under /sdcard/chtLog
                 // by file name MDHMS, Month Date Hour Minute Second from nTime
                 // save content loopNum + finish time
                 //
-                String logContent = String.valueOf(loopNum) +","+ hours+"小时"+minutes+"分" + seconds +"秒,\n";
+                String logContent = String.valueOf(loopNum) +","+days +"days"+ hours+"hr"+minutes+"min" + seconds +"sec,\n";
                 Log.i("logContent",logContent);
 
                // second try file writer
@@ -134,17 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 }catch(IOException e){
                     e.printStackTrace();
                 }
-
-
-                /* first write to file, seems not work.
-                try {
-                    outputStream = openFileOutput(logFileName, Context.MODE_PRIVATE);
-                    outputStream.write(logContent.getBytes());
-                    outputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                */
 
                 new CountDownTimer(90000, 1000)
                 {

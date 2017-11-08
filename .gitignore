@@ -126,3 +126,7 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/androidstudio))))
+
+# add by artchou for ignore raw and logcat folder
+logcat
+app/src/main/res/raw
